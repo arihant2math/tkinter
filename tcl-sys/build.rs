@@ -3,10 +3,8 @@ use std::path::PathBuf;
 
 fn main() {
     // Tell cargo to look for shared libraries in the specified directory
-    println!("cargo:rustc-link-search=C:/ActiveTcl/bin");
+    println!(r"cargo:rustc-link-search=C:\ActiveTcl\lib");
 
-    // Tell cargo to tell rustc to link the system bzip2
-    // shared library.
     println!("cargo:rustc-link-lib=tcl86t");
 
     // The bindgen::Builder is the main entry point

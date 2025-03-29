@@ -166,6 +166,8 @@ pub use tcl_derive::{
     tclosure,
 };
 
+pub use clib as sys;
+
 use std::{
     env,
     ffi::CString,

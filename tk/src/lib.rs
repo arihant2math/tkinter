@@ -387,6 +387,8 @@ pub use font::Font;
 pub mod ext;
 pub use ext::{AddHBox, AddVBox, HBox, HBoxResize, VBox, VBoxResize};
 
+pub use clib as sys;
+
 const TEST_MAIN_WINDOW: &'static str = "winfo exists .\0";
 
 /// Loop for events until all windows are deleted.

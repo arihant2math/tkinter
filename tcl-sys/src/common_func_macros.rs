@@ -1,4 +1,4 @@
-fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
+pub fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount -= 1;
     if obj.refCount == 0 {
@@ -7,7 +7,7 @@ fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
     }
 }
 
-fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
+pub fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount += 1;
 }

@@ -2,6 +2,8 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
+    println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=build.rs");
     // Tell cargo to look for shared libraries in the specified directory
     println!(r"cargo:rustc-link-search=C:\ActiveTcl\lib");
 

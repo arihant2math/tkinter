@@ -1,7 +1,5 @@
 [workspace]
 members = [
-    "tcl",
-    "tcl_derive",
-    "tk",
+    "tcl-sys", "tk-sys",
 ]
 resolver = "2"

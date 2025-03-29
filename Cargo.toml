@@ -2,4 +2,4 @@
 members = [
     "tcl-sys", "tk-sys",
 ]
-resolver = "2"
+resolver = "3"

@@ -4,11 +4,15 @@ use std::path::PathBuf;
 fn main() {
     println!("cargo:rerun-if-changed=wrapper.h");
     println!("cargo:rerun-if-changed=build.rs");
-    // Tell cargo to look for shared libraries in the specified directory
+
+    println!(r"cargo:rustc-link-search=C:\ActiveTcl\bin");
     println!(r"cargo:rustc-link-search=C:\ActiveTcl\lib");
 
     println!("cargo:rustc-link-lib=tk86t");
+    println!("cargo:rustc-link-lib=tkstub86");
+
     println!("cargo:rustc-link-lib=tcl86t");
+    println!("cargo:rustc-link-lib=tclstub86");
 
     // The bindgen::Builder is the main entry point
     // to bindgen, and lets you build up options for
@@ -21,6 +25,8 @@ fn main() {
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        .blocklist_function("Tcl_DecrRefCount")
+        .blocklist_function("Tcl_IncrRefCount")
         // Finish the builder and generate the bindings.
         .generate()
         // Unwrap the Result and panic on failure.

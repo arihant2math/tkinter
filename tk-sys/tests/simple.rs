@@ -1,3 +1,5 @@
+use std::ffi::CString;
+
 fn convert_str(s: &str) -> *const std::ffi::c_char {
     s.as_ptr() as *const std::ffi::c_char
 }
@@ -15,7 +17,6 @@ fn test_basic() {
 fn test_mem() {
     unsafe {
         let interp = tk_sys::Tcl_CreateInterp();
-        let mut len = 0;
         let ptr = tk_sys::Tcl_Alloc(100);
         assert!(!ptr.is_null());
         tk_sys::Tcl_Free(ptr);

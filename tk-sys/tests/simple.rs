@@ -1,5 +1,3 @@
-use std::ffi::CString;
-
 fn convert_str(s: &str) -> *const std::ffi::c_char {
     s.as_ptr() as *const std::ffi::c_char
 }

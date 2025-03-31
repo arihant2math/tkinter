@@ -78,7 +78,7 @@ mod os {
 
     pub fn get_lib_dirs() -> Vec<String> {
         get_config()
-            .lib_dirs
+            .link_paths
             .into_iter()
             .map(|s| s.to_string_lossy().to_string())
             .collect()

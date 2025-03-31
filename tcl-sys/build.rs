@@ -35,6 +35,8 @@ const WRAPPER_FILE: &str = "wrapper.h";
 
 #[cfg(target_os = "windows")]
 mod os {
+    use std::path::PathBuf;
+
     #[cfg(target_arch = "x86_64")]
     const ARCH_FOLDER: &str = "amd64";
     #[cfg(target_arch = "x86")]
@@ -53,7 +55,19 @@ mod os {
     }
 
     pub fn get_lib_dirs() -> Vec<String> {
-        vec![BIN_DIR.to_string(), LIB_DIR.to_string()]
+        // Create absolute paths to the lib and bin directories
+        let lib_dir = PathBuf::from(LIB_DIR);
+        let bin_dir = PathBuf::from(BIN_DIR);
+        let lib_dir = lib_dir
+            .canonicalize()
+            .expect("Failed to canonicalize lib directory");
+        let bin_dir = bin_dir
+            .canonicalize()
+            .expect("Failed to canonicalize bin directory");
+        vec![
+            lib_dir.to_string_lossy().to_string(),
+            bin_dir.to_string_lossy().to_string(),
+        ]
     }
 
     pub fn get_include_dirs() -> Vec<String> {

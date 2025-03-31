@@ -1,11 +1,13 @@
-This project provides raw API bindings to Tcl/Tk.
+# Tkinter
 
-# Installation
+Raw API bindings for Tcl/Tk.
 
-## Windows
+## Installation
+
+### Windows
 Just add the crate, binaries are bundled with the installation.
 
-## MacOS/ Linux
+### MacOS/ Linux
 Install `tk-dev` and `pkgconfig` with your package manager.
 
 apt:
@@ -19,8 +21,8 @@ brew install tcl-tk pkg-config
 
 then add the crate.
 
-## Debugging install
-If not on windows try running `pkg-config --cflags --libs tk`
+### Debugging build failures
+If not on windows try running `pkg-config --cflags --libs tcl`
 
 The output should be something like:
 
@@ -29,14 +31,14 @@ The output should be something like:
 if it is something like
 
 ```
-Package tk was not found in the pkg-config search path.
-Perhaps you should add the directory containing `tk.pc'
+Package tcl was not found in the pkg-config search path.
+Perhaps you should add the directory containing `tcl.pc'
 to the PKG_CONFIG_PATH environment variable
-No package 'tk' found
+No package 'tcl' found
 ```
 
 then tk/tcl has not properly been installed.
 
-# License
+## License
 
 Under Apache License 2.0 or MIT License, at your will.

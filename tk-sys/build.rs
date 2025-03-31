@@ -1,6 +1,7 @@
 use std::env;
 use std::path::PathBuf;
 
+#[allow(clippy::unused)]
 macro_rules! combine {
     ($A:expr, $B:expr) => {{
         const A: &str = $A;
@@ -15,9 +16,11 @@ macro_rules! combine {
         const fn copy_slice(input: &[u8], mut output: [u8; LEN], offset: usize) -> [u8; LEN] {
             let mut index = 0;
             loop {
-                output[offset+index] = input[index];
+                output[offset + index] = input[index];
                 index += 1;
-                if index == input.len() { break }
+                if index == input.len() {
+                    break;
+                }
             }
             output
         }
@@ -25,7 +28,7 @@ macro_rules! combine {
         // how bad is the assumption that `&str` and `&[u8]` have the same layout?
         const RESULT_STR: &str = unsafe { std::mem::transmute(RESULT) };
         RESULT_STR
-    }}
+    }};
 }
 
 const WRAPPER_FILE: &str = "wrapper.h";
@@ -41,14 +44,22 @@ mod os {
     const LIB_DIR: &str = combine!(combine!("../src/win/", ARCH_FOLDER), "/lib");
     const INCLUDE_DIR: &str = combine!(combine!("../src/win/", ARCH_FOLDER), "/include");
     const BIN_DIR: &str = combine!(combine!("../src/win/", ARCH_FOLDER), "/bin");
-    pub fn get_bin_dir() -> String {
-        BIN_DIR.to_string()
+
+    pub fn get_libs() -> Vec<String> {
+        vec![
+            "tk86t".to_string(),
+            "tkstub86".to_string(),
+            "tcl86t".to_string(),
+            "tclstub86".to_string(),
+        ]
     }
-    pub fn get_lib_dir() -> String {
-        LIB_DIR.to_string()
+
+    pub fn get_lib_dirs() -> Vec<String> {
+        vec![BIN_DIR.to_string(), LIB_DIR.to_string()]
     }
-    pub fn get_include_dir() -> String {
-        INCLUDE_DIR.to_string()
+
+    pub fn get_include_dirs() -> Vec<String> {
+        vec![INCLUDE_DIR.to_string()]
     }
 }
 
@@ -61,63 +72,51 @@ mod os {
             .unwrap()
     }
 
-    pub fn get_bin_dir() -> String {
+    pub fn get_libs() -> Vec<String> {
+        get_config().libs
+    }
+
+    pub fn get_lib_dirs() -> Vec<String> {
         get_config()
+            .lib_dirs
+            .into_iter()
+            .map(|s| s.to_string_lossy().to_string())
+            .collect()
     }
 
-    pub fn get_lib_dir() -> String {
-        dbg!(get_config());
-        todo!()
-    }
-
-
-    pub fn get_include_dir() -> String {
-        dbg!(get_config());
-        todo!()
+    pub fn get_include_dirs() -> Vec<String> {
+        get_config()
+            .include_paths
+            .into_iter()
+            .map(|s| s.to_string_lossy().to_string())
+            .collect()
     }
 }
 
-
-use os::{get_bin_dir, get_lib_dir, get_include_dir};
-
-
+use os::{get_include_dirs, get_lib_dirs, get_libs};
 
 fn main() {
     println!("cargo:rerun-if-changed={WRAPPER_FILE}");
     println!("cargo:rerun-if-changed=build.rs");
 
-    println!("cargo:rustc-link-search={bin_dir}", bin_dir = get_bin_dir());
-    println!(r"cargo:rustc-link-search={lib_dir}", lib_dir = get_lib_dir());
+    for dir in get_lib_dirs() {
+        println!("cargo:rustc-link-search={dir}", dir = dir);
+    }
 
-    const LINKS: [&str; 4] = [
-        "tk86t",
-        "tkstub86",
-        "tcl86t",
-        "tclstub86",
-    ];
-    for link in LINKS.iter() {
+    for link in get_libs() {
         println!("cargo:rustc-link-lib={link}");
     }
 
-    // The bindgen::Builder is the main entry point
-    // to bindgen, and lets you build up options for
-    // the resulting bindings.
-    let bindings = bindgen::Builder::default()
-        // The input header we would like to generate
-        // bindings for.
+    let mut builder = bindgen::Builder::default()
         .header(WRAPPER_FILE)
-        .clang_arg(format!("-I{}", get_include_dir()))
-        // Tell cargo to invalidate the built crate whenever any of the
-        // included header files changed.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .blocklist_function("Tcl_DecrRefCount")
-        .blocklist_function("Tcl_IncrRefCount")
-        // Finish the builder and generate the bindings.
-        .generate()
-        // Unwrap the Result and panic on failure.
-        .expect("Unable to generate bindings");
+        .blocklist_function("Tcl_IncrRefCount");
+    for dir in get_include_dirs() {
+        builder = builder.clang_arg(format!("-I{dir}"));
+    }
+    let bindings = builder.generate().expect("Unable to generate bindings");
 
-    // Write the bindings to the $OUT_DIR/bindings.rs file.
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
         .write_to_file(out_path.join("bindings.rs"))

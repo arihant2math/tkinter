@@ -52,9 +52,29 @@ mod os {
     }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(not(target_os = "windows"))]
 mod os {
-    
+    fn get_config() -> pkg_config::Library {
+        pkg_config::Config::new()
+            .atleast_version("8.6")
+            .probe("tk")
+            .unwrap()
+    }
+
+    pub fn get_bin_dir() -> String {
+        get_config()
+    }
+
+    pub fn get_lib_dir() -> String {
+        dbg!(get_config());
+        todo!()
+    }
+
+
+    pub fn get_include_dir() -> String {
+        dbg!(get_config());
+        todo!()
+    }
 }
 
 

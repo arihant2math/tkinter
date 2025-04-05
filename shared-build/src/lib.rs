@@ -31,8 +31,12 @@ macro_rules! combine {
     }};
 }
 
-
-pub fn build(wrapper_file: &str, get_lib_dirs: fn() -> Vec<String>, get_include_dirs: fn() -> Vec<String>, get_libs: fn() -> Vec<String>) {
+pub fn build(
+    wrapper_file: &str,
+    get_lib_dirs: fn() -> Vec<String>,
+    get_include_dirs: fn() -> Vec<String>,
+    get_libs: fn() -> Vec<String>,
+) {
     println!("cargo:rerun-if-changed={wrapper_file}");
     println!("cargo:rerun-if-changed=build.rs");
 

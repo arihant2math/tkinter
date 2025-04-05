@@ -1,5 +1,5 @@
 [workspace]
-members = [
+members = [ "shared-build",
     "tcl-sys", "tk-sys",
 ]
 resolver = "3"
@@ -12,3 +12,6 @@ repository = "https://github.com/arihant2math/tkinter.git"
 version = "0.1.0"
 license = "Apache-2.0 OR MIT"
 include = ["**/*"]
+
+[workspace.dependencies]
+pkg-config = "0.3"

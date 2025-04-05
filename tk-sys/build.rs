@@ -1,41 +1,10 @@
-use std::env;
-use std::path::PathBuf;
-
-#[allow(clippy::unused)]
-macro_rules! combine {
-    ($A:expr, $B:expr) => {{
-        const A: &str = $A;
-        const B: &str = $B;
-        const LEN: usize = A.len() + B.len();
-        const fn combined() -> [u8; LEN] {
-            let mut out = [0u8; LEN];
-            out = copy_slice(A.as_bytes(), out, 0);
-            out = copy_slice(B.as_bytes(), out, A.len());
-            out
-        }
-        const fn copy_slice(input: &[u8], mut output: [u8; LEN], offset: usize) -> [u8; LEN] {
-            let mut index = 0;
-            loop {
-                output[offset + index] = input[index];
-                index += 1;
-                if index == input.len() {
-                    break;
-                }
-            }
-            output
-        }
-        const RESULT: &[u8] = &combined();
-        // how bad is the assumption that `&str` and `&[u8]` have the same layout?
-        const RESULT_STR: &str = unsafe { std::mem::transmute(RESULT) };
-        RESULT_STR
-    }};
-}
-
 const WRAPPER_FILE: &str = "wrapper.h";
 
 #[cfg(target_os = "windows")]
 mod os {
     use std::path::PathBuf;
+
+    use shared_build::combine;
 
     #[cfg(target_arch = "x86_64")]
     const ARCH_FOLDER: &str = "amd64";
@@ -110,29 +79,5 @@ mod os {
 use os::{get_include_dirs, get_lib_dirs, get_libs};
 
 fn main() {
-    println!("cargo:rerun-if-changed={WRAPPER_FILE}");
-    println!("cargo:rerun-if-changed=build.rs");
-
-    for dir in get_lib_dirs() {
-        println!("cargo:rustc-link-search={dir}", dir = dir);
-    }
-
-    for link in get_libs() {
-        println!("cargo:rustc-link-lib={link}");
-    }
-
-    let mut builder = bindgen::Builder::default()
-        .header(WRAPPER_FILE)
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
-        .blocklist_function("Tcl_DecrRefCount")
-        .blocklist_function("Tcl_IncrRefCount");
-    for dir in get_include_dirs() {
-        builder = builder.clang_arg(format!("-I{dir}"));
-    }
-    let bindings = builder.generate().expect("Unable to generate bindings");
-
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    bindings
-        .write_to_file(out_path.join("bindings.rs"))
-        .expect("Couldn't write bindings!");
+    shared_build::build(WRAPPER_FILE, get_lib_dirs, get_include_dirs, get_libs);
 }

@@ -15,5 +15,5 @@ description = "Raw TCL bindings for Rust"
 name = "tcl_sys"
 
 [build-dependencies]
-bindgen = "0.71"
-pkg-config = "0.3"
+pkg-config = { workspace = true }
+shared-build = { path = "../shared-build" }

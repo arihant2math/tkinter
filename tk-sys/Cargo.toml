@@ -15,5 +15,5 @@ description = "Raw TK bindings for Rust"
 name = "tk_sys"
 
 [build-dependencies]
-bindgen = "0.71"
-pkg-config = "0.3"
+pkg-config = { workspace = true }
+shared-build = { path = "../shared-build" }

@@ -48,10 +48,7 @@ mod os {
     const BIN_DIR: &str = combine!(combine!("../src/win/", ARCH_FOLDER), "/bin");
 
     pub fn get_libs() -> Vec<String> {
-        vec![
-            "tcl86t".to_string(),
-            "tclstub86".to_string(),
-        ]
+        vec!["tcl86t".to_string(), "tclstub86".to_string()]
     }
 
     pub fn get_lib_dirs() -> Vec<String> {

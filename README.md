@@ -42,3 +42,9 @@ then tk/tcl has not properly been installed.
 ## License
 
 Under Apache License 2.0 or MIT License, at your will.
+
+## MSRV Policy
+
+Currently: **1.84**
+
+Any updates to the MSRV are considered breaking changes.

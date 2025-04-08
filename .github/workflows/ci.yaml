@@ -10,17 +10,37 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  test:
 
-    runs-on: ubuntu-latest
+    runs-on:  ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        rust-version: [ stable, beta, nightly, 1.77 ]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup
+    - name: Setup TK/TCL
+      if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install tk-dev
+
+    - name: Setup TK/TCL
+      if: runner.os == 'macOS'
+      run: |
+        brew install tcl-tk
+        echo 'export PATH="/usr/local/opt/tcl-tk/bin:$PATH"' >> $GITHUB_ENV
+        echo 'export LDFLAGS="-L/usr/local/opt/tcl-tk/lib"' >> $GITHUB_ENV
+        echo 'export CPPFLAGS="-I/usr/local/opt/tcl-tk/include"' >> $GITHUB_ENV
+
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ matrix.rust-version }}
+
     - name: Build
       run: cargo build
+
     - name: Run tests
       run: cargo test

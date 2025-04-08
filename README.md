@@ -45,6 +45,6 @@ Under Apache License 2.0 or MIT License, at your will.
 
 ## MSRV Policy
 
-Currently: **1.84**
+Currently: **1.85**
 
 Any updates to the MSRV are considered breaking changes.

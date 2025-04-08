@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
-        rust-version: [ stable, beta, nightly, 1.84 ]
+        rust-version: [ stable, beta, nightly, 1.85 ]
 
     steps:
     - uses: actions/checkout@v4

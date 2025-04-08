@@ -12,6 +12,7 @@ repository = "https://github.com/arihant2math/tkinter.git"
 version = "0.2.0"
 license = "Apache-2.0 OR MIT"
 include = ["**/*"]
+rust-version = "1.84"
 
 [workspace.dependencies]
 pkg-config = "0.3"

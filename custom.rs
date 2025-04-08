@@ -3,12 +3,13 @@
 /// 
 /// # Safety
 /// If the reference count is decremented to zero, the object is freed and `objPtr` turns into a null pointer.
+/// If objPtr is null, UB occurs.
 pub unsafe fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount -= 1;
     if obj.refCount == 0 {
         // Free the object
-        unsafe { Tcl_Free(objPtr as *mut std::ffi::c_char) };
+        unsafe { Tcl_Free(objPtr as _) };
     }
 }
 
@@ -17,6 +18,7 @@ pub unsafe fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
 /// 
 /// # Safety
 /// If [`Tcl_DecrRefCount`] is not called and the pointer is dropped, the object will be leaked.
+/// If objPtr is null, UB occurs.
 pub unsafe fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount += 1;

@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "tcl-sys", "tk-sys",
+]
+resolver = "2"

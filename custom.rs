@@ -1,4 +1,9 @@
-pub fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
+/// Decrement the reference count of a Tcl object.
+/// If the reference count reaches zero, the object is freed.
+/// 
+/// # Safety
+/// If the reference count is decremented to zero, the object is freed and `objPtr` turns into a null pointer.
+pub unsafe fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount -= 1;
     if obj.refCount == 0 {
@@ -7,7 +12,12 @@ pub fn Tcl_DecrRefCount(objPtr: *mut Tcl_Obj) {
     }
 }
 
-pub fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
+/// Increment the reference count of a Tcl object.
+/// This is used to indicate that the object is being used and should not be freed.
+/// 
+/// # Safety
+/// If [`Tcl_DecrRefCount`] is not called and the pointer is dropped, the object will be leaked.
+pub unsafe fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount += 1;
 }

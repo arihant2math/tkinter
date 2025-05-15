@@ -53,7 +53,8 @@ pub fn build(
         .header(wrapper_file)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .blocklist_function("Tcl_DecrRefCount")
-        .blocklist_function("Tcl_IncrRefCount");
+        .blocklist_function("Tcl_IncrRefCount")
+        .blocklist_function("Tcl_AppInit");
 
     if tk {
         builder = builder.blocklist_item("(Tcl|TCL).*");

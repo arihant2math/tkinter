@@ -8,4 +8,16 @@ impl Time {
         };
         Time(time)
     }
+
+    pub fn into_raw(self) -> tcl_sys::Tcl_Time {
+        self.0
+    }
+
+    pub fn as_ptr(&self) -> *const tcl_sys::Tcl_Time {
+        &self.0
+    }
+
+    pub fn as_mut_ptr(&mut self) -> *mut tcl_sys::Tcl_Time {
+        &mut self.0
+    }
 }

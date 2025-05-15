@@ -19,6 +19,18 @@ impl Obj {
         self.0.as_ptr()
     }
 
+    pub fn get_ref_count(&self) -> i32 {
+        unsafe {
+            self.0.as_ref().refCount as i32
+        }
+    }
+
+    pub fn set_ref_count(&mut self, count: i32) {
+        unsafe {
+            self.0.as_mut().refCount = count as _;
+        }
+    }
+
     pub fn from_string(string: &str) -> Self {
         let c_str = std::ffi::CString::new(string).expect("Failed to create CString");
         let obj = unsafe { tcl_sys::Tcl_NewStringObj(c_str.as_ptr(), c_str.as_bytes().len() as i32) };

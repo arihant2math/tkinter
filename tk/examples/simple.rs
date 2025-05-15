@@ -22,7 +22,7 @@ fn main() {
         }
 
         // Create the main application window
-        let mut main_window = tk::Window::main_window(&interp);
+        let main_window = tk::Window::main_window(&interp);
         if main_window.is_none() {
             let err = interp.get_string_result();
             eprintln!("Failed to create main window: {}", err);

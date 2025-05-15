@@ -25,3 +25,9 @@ pub unsafe fn Tcl_IncrRefCount(objPtr: *mut Tcl_Obj) {
     let mut obj = unsafe { *objPtr };
     obj.refCount += 1;
 }
+
+// TODO: fix
+// #[inline(always)]
+// pub unsafe fn Tcl_AppInit(interp: *mut Tcl_Interp) -> i32 {
+//     tcl_sys::Tcl_AppInit(interp)
+// }

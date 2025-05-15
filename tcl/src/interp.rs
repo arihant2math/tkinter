@@ -25,6 +25,12 @@ impl Interp {
         }
     }
 
+    // pub fn app_init(&mut self) -> i32 {
+    //     unsafe {
+    //         tcl_sys::Tcl_AppInit(self.0.as_ptr()) as i32
+    //     }
+    // }
+
     pub fn create_slave(&mut self, name: &str, is_safe: i32) -> Self {
         let name = std::ffi::CString::new(name).unwrap();
         let interp = unsafe {
@@ -52,11 +58,19 @@ impl Interp {
     }
 
     pub unsafe fn get_string_result(&self) -> String {
-        let result = self.get_obj_result();
-        let result_ptr = tcl_sys::Tcl_GetString(result.0.as_ptr());
-        let _ = tcl_sys::Tcl_GetStringResult(self.0.as_ptr());
-        let result_str = std::ffi::CStr::from_ptr(result_ptr);
-        result_str.to_string_lossy().into_owned()
+        unsafe {
+            let result = self.get_obj_result();
+            let result_ptr = tcl_sys::Tcl_GetString(result.0.as_ptr());
+            let _ = tcl_sys::Tcl_GetStringResult(self.0.as_ptr());
+            let result_str = std::ffi::CStr::from_ptr(result_ptr);
+            result_str.to_string_lossy().into_owned()
+        }
+    }
+
+    pub unsafe fn reset_result(&self) {
+        unsafe {
+            tcl_sys::Tcl_ResetResult(self.0.as_ptr());
+        }
     }
 
     pub unsafe fn eval(&self, script: &str) -> i32 {
@@ -83,6 +97,97 @@ impl Interp {
         let filename = std::ffi::CString::new(filename).unwrap();
         unsafe {
             tcl_sys::Tcl_EvalFile(self.0.as_ptr(), filename.as_ptr()) as i32
+        }
+    }
+
+    pub unsafe fn expr_string(&self, expr: &str) -> i32 {
+        let expr = std::ffi::CString::new(expr).unwrap();
+        unsafe {
+            tcl_sys::Tcl_ExprString(self.0.as_ptr(), expr.as_ptr()) as i32
+        }
+    }
+
+    pub unsafe fn expr_obj(&self, obj: Obj) -> i32 {
+        todo!()
+    }
+
+    pub fn expr_long(&self, expr: &str) -> Option<i64> {
+        todo!()
+    }
+
+    pub fn expr_double(&self, expr: &str) -> Option<f64> {
+        let expr = std::ffi::CString::new(expr).unwrap();
+        let mut value: f64 = 0.0;
+        let result = unsafe {
+            tcl_sys::Tcl_ExprDouble(self.0.as_ptr(), expr.as_ptr(), &mut value)
+        };
+        if result == 0 {
+            Some(value)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_var(&self, name: &str, flags: i32) -> Option<String> {
+        let name = std::ffi::CString::new(name).unwrap();
+        let text = unsafe {
+            tcl_sys::Tcl_GetVar(self.0.as_ptr(), name.as_ptr(), flags)
+        };
+        if text.is_null() {
+            None
+        } else {
+            Some(unsafe { std::ffi::CStr::from_ptr(text) }.to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_var2(&self, name1: &str, name2: &str, flags: i32) -> Option<String> {
+        let name1 = std::ffi::CString::new(name1).unwrap();
+        let name2 = std::ffi::CString::new(name2).unwrap();
+        let text = unsafe {
+            tcl_sys::Tcl_GetVar2(self.0.as_ptr(), name1.as_ptr(), name2.as_ptr(), flags)
+        };
+        if text.is_null() {
+            None
+        } else {
+            Some(unsafe { std::ffi::CStr::from_ptr(text) }.to_string_lossy().into_owned())
+        }
+    }
+
+    pub fn get_var2_obj(&self, name1: &str, name2: &str, flags: i32) -> Option<Obj> {
+        let name1 = std::ffi::CString::new(name1).unwrap();
+        let name2 = std::ffi::CString::new(name2).unwrap();
+        let obj = unsafe {
+            tcl_sys::Tcl_GetVar2Ex(self.0.as_ptr(), name1.as_ptr(), name2.as_ptr(), flags)
+        };
+        if obj.is_null() {
+            None
+        } else {
+            Some(unsafe { Obj::from_raw(obj) })
+        }
+    }
+
+    pub fn set_var(&mut self, name: &str, value: &str, flags: i32) -> i32 {
+        let name = std::ffi::CString::new(name).unwrap();
+        let value = std::ffi::CString::new(value).unwrap();
+        unsafe {
+            tcl_sys::Tcl_SetVar(self.0.as_ptr(), name.as_ptr(), value.as_ptr(), flags) as i32
+        }
+    }
+
+    pub fn set_var2(&mut self, name1: &str, name2: &str, value: &str, flags: i32) -> i32 {
+        let name1 = std::ffi::CString::new(name1).unwrap();
+        let name2 = std::ffi::CString::new(name2).unwrap();
+        let value = std::ffi::CString::new(value).unwrap();
+        unsafe {
+            tcl_sys::Tcl_SetVar2(self.0.as_ptr(), name1.as_ptr(), name2.as_ptr(), value.as_ptr(), flags) as i32
+        }
+    }
+
+    pub fn set_var2_obj(&mut self, name1: &str, name2: &str, obj: Obj, flags: i32) -> i32 {
+        let name1 = std::ffi::CString::new(name1).unwrap();
+        let name2 = std::ffi::CString::new(name2).unwrap();
+        unsafe {
+            tcl_sys::Tcl_SetVar2Ex(self.0.as_ptr(), name1.as_ptr(), name2.as_ptr(), obj.0.as_ptr(), flags) as i32
         }
     }
 }

@@ -15,6 +15,9 @@ description = "Raw TK bindings for Rust"
 [lib]
 name = "tk_sys"
 
+[dependencies]
+tcl-sys = { version = "0.3", path = "../tcl-sys" }
+
 [build-dependencies]
 pkg-config = { workspace = true }
 shared-build = { path = "../shared-build" }

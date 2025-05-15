@@ -36,6 +36,7 @@ pub fn build(
     get_lib_dirs: fn() -> Vec<String>,
     get_include_dirs: fn() -> Vec<String>,
     get_libs: fn() -> Vec<String>,
+    tk: bool,
 ) {
     println!("cargo:rerun-if-changed={wrapper_file}");
     println!("cargo:rerun-if-changed=build.rs");
@@ -53,6 +54,9 @@ pub fn build(
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .blocklist_function("Tcl_DecrRefCount")
         .blocklist_function("Tcl_IncrRefCount");
+    if tk {
+        builder = builder.blocklist_item("Tcl_.*");
+    }
     for dir in get_include_dirs() {
         builder = builder.clang_arg(format!("-I{dir}"));
     }

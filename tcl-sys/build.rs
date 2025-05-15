@@ -74,5 +74,5 @@ mod os {
 use os::{get_include_dirs, get_lib_dirs, get_libs};
 
 fn main() {
-    shared_build::build(WRAPPER_FILE, get_lib_dirs, get_include_dirs, get_libs);
+    shared_build::build(WRAPPER_FILE, get_lib_dirs, get_include_dirs, get_libs, false);
 }

@@ -1,6 +1,6 @@
 [workspace]
-members = [ "shared-build",
-    "tcl-sys", "tk-sys",
+members = [
+    "shared-build", "tcl", "tcl-sys", "tk-sys"
 ]
 resolver = "3"
 

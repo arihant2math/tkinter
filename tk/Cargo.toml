@@ -1,5 +1,5 @@
 [package]
-name = "tcl"
+name = "tk"
 
 authors.workspace = true
 edition.workspace = true
@@ -10,7 +10,8 @@ repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
 
-description = "TCL bindings for Rust"
+description = "TK bindings for Rust"
 
 [dependencies]
-tcl-sys = { version = "0.3", path = "../tcl-sys" }
+tcl = { version = "0.3", path = "../tcl" }
+tk-sys = { version = "0.3", path = "../tk-sys" }

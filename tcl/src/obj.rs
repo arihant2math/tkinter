@@ -14,6 +14,11 @@ impl Obj {
         Obj(NonNull::new(obj).expect("Failed to create Tcl_Obj from raw pointer"))
     }
 
+
+    pub unsafe fn as_ptr(&self) -> *mut tcl_sys::Tcl_Obj {
+        self.0.as_ptr()
+    }
+
     pub fn from_string(string: &str) -> Self {
         let c_str = std::ffi::CString::new(string).expect("Failed to create CString");
         let obj = unsafe { tcl_sys::Tcl_NewStringObj(c_str.as_ptr(), c_str.as_bytes().len() as i32) };
@@ -91,10 +96,10 @@ impl Obj {
     }
 
     pub fn get_long(&self) -> Option<i64> {
-        let mut value: i64 = 0;
-        let result = unsafe { tcl_sys::Tcl_GetLongFromObj(std::ptr::null_mut(), self.0.as_ptr(), value as _) };
+        let mut value = 0 as _;
+        let result = unsafe { tcl_sys::Tcl_GetLongFromObj(std::ptr::null_mut(), self.0.as_ptr(), &mut value) };
         if result == 0 {
-            Some(value)
+            Some(value as _)
         } else {
             None
         }

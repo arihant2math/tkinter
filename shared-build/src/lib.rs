@@ -54,8 +54,9 @@ pub fn build(
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .blocklist_function("Tcl_DecrRefCount")
         .blocklist_function("Tcl_IncrRefCount");
+
     if tk {
-        builder = builder.blocklist_item("Tcl_.*");
+        builder = builder.blocklist_item("(Tcl|TCL).*");
     }
     for dir in get_include_dirs() {
         builder = builder.clang_arg(format!("-I{dir}"));

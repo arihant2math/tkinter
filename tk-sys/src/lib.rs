@@ -5,4 +5,3 @@
 use tcl_sys::*;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-include!(concat!(env!("OUT_DIR"), "/custom.rs"));

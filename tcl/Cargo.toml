@@ -1,0 +1,13 @@
+[package]
+name = "tcl"
+edition.workspace = true
+authors.workspace = true
+readme.workspace = true
+repository.workspace = true
+version.workspace = true
+license.workspace = true
+include.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+tcl-sys = { version = "0.3", path = "../tcl-sys" }
